@@ -3,16 +3,22 @@ import CustomButton from '../CustomButton/CustomButton';
 import FormInput from '../FormInput/FormInput';
 import './Signin.scss';
 import { signInWithGoogle } from '../../firebase/firebase.utils';
+import { auth } from '../../firebase/firebase.utils'
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(email + " " + password)
-    setEmail('')
-    setPassword('')
+    try {
+      await auth.signInWithEmailAndPassword(email, password);
+      setEmail('')
+      setPassword('')
+    } catch (error) {
+      console.log(error.message)
+    }
+
   }
 
   const handleEmailChange = (event) => {
@@ -33,9 +39,9 @@ const SignIn = () => {
         <FormInput label="Email" name="email" type="email" value={email} required handleChange={handleEmailChange} />
         <FormInput label="Password" name="password" type="password" value={password} required handleChange={handlePasswordChange} />
         <div className='buttons'>
-          <CustomButton type="submit" onClick={signInWithGoogle}> {' '}
+          <CustomButton type="submit" onClick={handleSubmit}> {' '}
         Sign In </CustomButton>
-          <CustomButton isGoogleSignIn type="submit" onClick={signInWithGoogle}> {' '}
+          <CustomButton isGoogleSignIn type="button" onClick={signInWithGoogle}> {' '}
         Sign In With Google </CustomButton>
         </div>
       </form>
